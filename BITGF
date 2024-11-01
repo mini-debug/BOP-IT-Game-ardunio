@@ -1,0 +1,111 @@
+de <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h> 
+#include <Servo.h> 
+#include "TimerFreeTone.h"
+
+#define RED_LED 11
+#define BUTTON 12
+#define POT_PIN A0 
+#define JOYSTICK_X A1
+#define JOYSTICK_Y A2
+#define JOYSTICK_BTN 7
+
+#define SCREEN_WIDTH 128 
+#define SCREEEN_HEIGHT 64
+#define OLED_RESET -1
+#define SCREEN_ADRESS 0x3C
+
+#define SERVO 6 
+Servo servo 
+
+#define BUZZER 3 
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+
+  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS); 
+  
+  dispaly.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 10);
+  display.println("hello world!");
+  display.display(); 
+
+
+servo.attach(SERVO); 
+servo.write(0);
+
+  pinMode(BUZZER, OUTPUT);
+  
+  // pinMode(RED_LED, OUTPUT);
+  // pinMode(BUTTON, INPUT_PULLUP);
+ // pinMode(POT_PIN, INPUT_PULLUP);
+}
+
+void blink_led(int num_blinks) {
+  for (int i=0; i<num_blinks; i++){
+  digitalWrite(RED_LED, HIGH);
+  delay(300);
+  digitalWrite(RED_LED, LOW);
+  delay(300);
+  }
+}
+
+int fade_led() {
+  for (int i=0; i<256; i++) {
+  analogWrite(RED_LED, i);
+  delay(10);
+  }
+  
+  for (int i=0; i<255; i--) {
+  analogWrite(RED_LED, i);
+  delay(10);
+  }
+
+}
+
+void read_joystick(){
+  int joystick_x_value = analogRead(JOYSTICK_X); //PIN
+  int joystick_y_value = analogRead(JOYSTICK_Y); //PIN 
+  int joystick_btn = analogRead(JOYSTICK_BTN);  //PIN
+
+  Serial.print("Joystick X: ");
+  Serial.println(joystick_x_val); 
+  Serial.print("Joystick Y: ");
+  Serial.println(joystick_y_val);
+Serial.print("Joystick BUTTON: ");
+  Serial.println(joystick_btn);
+}
+
+
+void spin_servo(int start_pos, int end_pos) {
+  if (start_pos < end_pos) {  // Servo position should increase from start to end
+    for (int pos = start_pos; pos <= end_pos; pos++) {
+      servo.write(pos);
+    } 
+  }
+void loop() {
+ // blink_led(1); 
+ //fade_led();
+
+ int button = digitalRead(BUTTON); 
+ int pot_value = analogRead(POT_PIN);
+ int brightness = map(pot_value, 0, 1023, 0, 255); 
+ analogWrite(RED_LED, brightness); 
+ Serial.println(pot_value); 
+ 
+ spin_servo();
+ 
+ digitalWrite(BUZZER, HIGH);
+ delay(10);
+ digitalWrite(BUZZER, LOW);
+ delay(1000);
+
+  // if (button == 0) {
+  // fade_led(); 
+ //}  
+}
